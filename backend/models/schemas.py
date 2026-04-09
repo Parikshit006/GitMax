@@ -66,7 +66,26 @@ class AnalysisResponse(BaseModel):
     summary: Summary
     files: List[FileResult] = Field(default_factory=list)
     agent_logs: List[AgentLog] = Field(default_factory=list)
-    signals: List[SignalOutput] = Field(default_factory=list)
+    signals: List[SignalOutput]
+
+class HistoryResponse(BaseModel):
+    id: str
+    created_at: Any
+    top_file: str
+    risk_score: int
+    expected_loss: float
+    summary: str
+
+class RepoResponse(BaseModel):
+    name: str
+    owner: str
+    is_private: bool
+
+class PRListResponse(BaseModel):
+    pr_number: int
+    title: str
+    state: str
+    html_url: str = Field(default_factory=list)
 
 
 # ---------------------------------------------------------------------------

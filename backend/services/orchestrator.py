@@ -66,6 +66,21 @@ class Orchestrator:
             if not final_response:
                 raise ValueError("ReportAgent did not produce a final response.")
                 
+            # Safely hook into local database ignoring DEMO constraints natively
+            if not settings.DEMO_MODE and user_data:
+                try:
+                    from backend.database import AsyncSessionLocal
+                    from backend.services.db_service import log_analysis_result
+                    async with AsyncSessionLocal() as db:
+                        await log_analysis_result(
+                            db, user_data=user_data, 
+                            repo_url=request.repo_url, 
+                            pr_number=request.pr_number, 
+                            analysis_resp=final_response.model_dump()
+                        )
+                except Exception as log_e:
+                    print(f"Non-fatal fallback avoiding DB transaction dumps: {log_e}")
+
             return final_response
 
         except Exception as e:
