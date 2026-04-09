@@ -7,7 +7,9 @@ from backend.models.schemas import (
 )
 import os
 from langchain_groq import ChatGroq
+from langchain_groq import ChatGroq
 from langchain_core.prompts import PromptTemplate
+import re
 
 # Confidence by overall risk level
 CONFIDENCE_MAP: dict[str, float] = {
@@ -30,6 +32,19 @@ class ReportAgent(BaseAgent):
     def name(self) -> str:
         return "Report"
 
+    def _validate_cfo_statement(self, text: str, filename: str) -> bool:
+        """Determines string syntactic conformity against executive bounds."""
+        sentences = [s.strip() for s in text.split('.') if len(s.strip()) > 5]
+        if len(sentences) != 3:
+            return False
+        if "$" not in text:
+            return False
+        if "%" not in text:
+            return False
+        if filename.lower() not in text.lower():
+            return False
+        return True
+
     async def run(self, context: PipelineContext) -> PipelineContext:
         context.log(self.name, "running")
 
@@ -46,44 +61,50 @@ class ReportAgent(BaseAgent):
         )
         confidence = CONFIDENCE_MAP.get(overall_risk, 0.50)
         
-        # Gather health scores derived explicitly during RiskAgent execution
-        health_scores = [
-            int(s.value) for f in context.file_results for s in f.signals if s.name == "Health Score"
-        ]
+        # Determine explicit worst-case file constraint
+        worst_file = "unknown_file"
+        if context.file_results:
+            worst_file = max(context.file_results, key=lambda f: f.expected_cost).name
+            
+        risk_percent = {"HIGH": 85, "MEDIUM": 50, "LOW": 15, "UNKNOWN": 5}.get(overall_risk, 5)
 
-        # LangChain Integration: Generate the CEO Business-Impact Summary
-        ceo_recommendation = "Review system risk parameters and mitigate technical debt proactively."
+        # Explicit fallback satisfying CFO deterministic bounds
+        ceo_recommendation = f"The file {worst_file} carries a {risk_percent}% probability of causing a production failure. Based on your team cost model, this represents an expected loss of ${total_expected_loss:,.0f}. Delaying action by one sprint increases the likelihood of financial impact and system instability."
+
         try:
             llm = ChatGroq(
-                temperature=0.7, 
+                temperature=0.2, 
                 model_name="llama-3.1-8b-instant", 
                 api_key=os.environ.get("GROQ_API_KEY", "mock_key")
             )
             prompt = PromptTemplate(
-                input_variables=["risk", "loss", "scores"],
+                input_variables=["risk", "loss", "file"],
                 template=(
-                    "You are a predictive engineering AI reporting to a non-technical CEO. "
-                    "System Risk: {risk}. Cost of Inaction: ${loss}. Component Health Scores: {scores}. "
-                    "Write a 3-sentence executive summary emphasizing the financial cost of inaction in time and money, "
-                    "and highlighting components most likely to cause slowdowns in the next 90 days."
+                    "You are a CFO briefing the board. "
+                    "Write EXACTLY 3 sentences. No technical jargon. No vague adjectives. "
+                    "Sentence 1: State the file '{file}' and it has a {risk}% failure probability. "
+                    "Sentence 2: State the expected loss is exactly ${loss:,.0f} and reference the cost calculation. "
+                    "Sentence 3: Describe the explicit business consequence of delaying action by 1 sprint."
                 )
             )
-            
             chain = prompt | llm
-            # Fire the async LLM call
-            # Note: We wrap in try-except so if GROQ_API_KEY is missing, it skips gracefully without crashing the API
+            
             if os.environ.get("GROQ_API_KEY"):
-                res = await chain.ainvoke({"risk": overall_risk, "loss": total_expected_loss, "scores": health_scores})
-                ceo_recommendation = res.content
+                # Deterministic retry loop bounding syntax limits
+                for attempt in range(2):
+                    res = await chain.ainvoke({"risk": risk_percent, "loss": total_expected_loss, "file": worst_file})
+                    content = res.content.replace('\n', ' ').strip()
+                    if self._validate_cfo_statement(content, worst_file):
+                        ceo_recommendation = content
+                        break
         except Exception as e:
-            context.log(self.name, f"LangChain LLM Error defaults triggered. {str(e)}")
+            context.log(self.name, f"LLM constraint failed, safely yielding fallback. {str(e)}")
 
         summary = Summary(
             overall_risk=overall_risk,
             expected_loss=total_expected_loss,
             confidence=confidence,
         )
-        # We overload the top-level 'recommendation' or highlights depending on structure
         summary.recommendation = ceo_recommendation
 
         # Flatten all signals from all files for the top-level signal list

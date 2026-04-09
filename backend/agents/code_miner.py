@@ -1,7 +1,6 @@
 from backend.agents.base import BaseAgent
 from backend.models.schemas import PipelineContext, RawFile
-from backend.tools.github import fetch_pr_files
-from backend.tools.gitlab import fetch_gitlab_pr_files
+from backend.tools.factory import get_provider
 from pydriller import Repository
 from datetime import datetime, timedelta
 import os
@@ -22,18 +21,16 @@ class CodeMinerAgent(BaseAgent):
 
         # Dynamic Auth Token from pipeline context
         token = context.auth_token
-        provider = context.auth_provider
-        repo_url = context.pr_request.pr_number # wait, it's context.pr_request.repo_url 
         repo_url = context.pr_request.repo_url
         pr_number = context.pr_request.pr_number
-
-        # 1. Fetch changed files from the PR via REST APIs
-        if provider == "gitlab":
-            fetched_files = await fetch_gitlab_pr_files(repo_url=repo_url, pr_number=pr_number, token=token)
-        else:
-            # Default to GitHub natively
-            fetched_files = fetch_pr_files(repo_url=repo_url, pr_number=pr_number, token=token)
-
+        token = context.auth_token
+        
+        # 1. Dynamically acquire the correct abstraction Provider natively
+        provider_bot = get_provider(repo_url)
+        
+        # Extract files cleanly via the standard ABC interface
+        fetched_files = await provider_bot.fetch_pr_files(repo_url=repo_url, pr_number=pr_number, token=token)
+        
         modified_filenames = [f["name"] for f in fetched_files]
 
         # 2. Use PyDriller to determine historical 'bug churn' of those specific files
@@ -66,6 +63,9 @@ class CodeMinerAgent(BaseAgent):
             )
             for f in fetched_files
         ]
+
+        if not fetched_files:
+            raise ValueError("No files found in PR")
 
         context.raw_files = raw_files
         context.log(self.name, "done")
