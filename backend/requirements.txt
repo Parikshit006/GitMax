@@ -4,3 +4,9 @@ python-dotenv
 pydantic-settings
 requests
 radon
+httpx
+pyjwt
+cryptography
+pydriller
+langchain
+langchain-groq

@@ -5,6 +5,9 @@ from backend.models.schemas import (
     SignalOutput,
     Summary,
 )
+import os
+from langchain_groq import ChatGroq
+from langchain_core.prompts import PromptTemplate
 
 # Confidence by overall risk level
 CONFIDENCE_MAP: dict[str, float] = {
@@ -42,12 +45,46 @@ class ReportAgent(BaseAgent):
             sum(f.expected_cost for f in context.file_results), 2
         )
         confidence = CONFIDENCE_MAP.get(overall_risk, 0.50)
+        
+        # Gather health scores derived explicitly during RiskAgent execution
+        health_scores = [
+            int(s.value) for f in context.file_results for s in f.signals if s.name == "Health Score"
+        ]
+
+        # LangChain Integration: Generate the CEO Business-Impact Summary
+        ceo_recommendation = "Review system risk parameters and mitigate technical debt proactively."
+        try:
+            llm = ChatGroq(
+                temperature=0.7, 
+                model_name="llama-3.1-8b-instant", 
+                api_key=os.environ.get("GROQ_API_KEY", "mock_key")
+            )
+            prompt = PromptTemplate(
+                input_variables=["risk", "loss", "scores"],
+                template=(
+                    "You are a predictive engineering AI reporting to a non-technical CEO. "
+                    "System Risk: {risk}. Cost of Inaction: ${loss}. Component Health Scores: {scores}. "
+                    "Write a 3-sentence executive summary emphasizing the financial cost of inaction in time and money, "
+                    "and highlighting components most likely to cause slowdowns in the next 90 days."
+                )
+            )
+            
+            chain = prompt | llm
+            # Fire the async LLM call
+            # Note: We wrap in try-except so if GROQ_API_KEY is missing, it skips gracefully without crashing the API
+            if os.environ.get("GROQ_API_KEY"):
+                res = await chain.ainvoke({"risk": overall_risk, "loss": total_expected_loss, "scores": health_scores})
+                ceo_recommendation = res.content
+        except Exception as e:
+            context.log(self.name, f"LangChain LLM Error defaults triggered. {str(e)}")
 
         summary = Summary(
             overall_risk=overall_risk,
             expected_loss=total_expected_loss,
             confidence=confidence,
         )
+        # We overload the top-level 'recommendation' or highlights depending on structure
+        summary.recommendation = ceo_recommendation
 
         # Flatten all signals from all files for the top-level signal list
         all_signals: list[SignalOutput] = []

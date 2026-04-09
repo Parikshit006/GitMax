@@ -28,6 +28,7 @@ class Summary(BaseModel):
     overall_risk: str = Field(..., description="E.g., HIGH, MEDIUM, LOW")
     expected_loss: float = Field(..., description="Expected monetary or metric loss")
     confidence: float = Field(..., description="Confidence score 0-1")
+    recommendation: Optional[str] = None
 
 
 class FileMetrics(BaseModel):
@@ -85,6 +86,8 @@ class PipelineContext(BaseModel):
     run_id: str
     pr_request: PRRequest
     config: Dict[str, Any] = Field(default_factory=dict)
+    auth_provider: Optional[str] = None
+    auth_token: Optional[str] = None
 
     # Populated by CodeMinerAgent
     raw_files: List[RawFile] = Field(default_factory=list)

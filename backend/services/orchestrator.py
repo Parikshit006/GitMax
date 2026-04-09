@@ -25,7 +25,7 @@ class Orchestrator:
             ReportAgent(),
         ]
 
-    async def run_pipeline(self, request: PRRequest) -> AnalysisResponse:
+    async def run_pipeline(self, request: PRRequest, user_data: dict = None) -> AnalysisResponse:
         """
         Runs the full PR analysis pipeline for a given request.
         """
@@ -35,6 +35,8 @@ class Orchestrator:
             run_id=run_id,
             pr_request=request,
             config={},
+            auth_provider=user_data.get("provider") if user_data else None,
+            auth_token=user_data.get("access_token") if user_data else None,
         )
 
         # Execute each agent sequentially
