@@ -1,11 +1,10 @@
-/* ============================================================
-   Git Max AI — Global Styles
-   "The Precision Editorial" Design System
-   ============================================================ */
+/* Paste this at the bottom of the global.css file or use the previous configuration. Here is the updated global.css to merge the new styles */
 
 @import './design-tokens.css';
 
-/* ── Reset ────────────────────────────────────────────────── */
+/* ============================================================
+   Global Reset & Refinements
+   ============================================================ */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -16,40 +15,49 @@ html {
   font-size: 16px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
 }
 
 body {
-  font-family: var(--font-primary);
+  background-color: var(--background);
+  color: var(--on-surface-variant); /* Body runs slightly muted for readability against stark backgrounds */
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  line-height: var(--leading-relaxed);
+  overflow-x: hidden;
   font-size: var(--text-body-md);
-  line-height: var(--leading-normal);
-  color: var(--on-surface);
-  background-color: var(--surface);
-  min-height: 100vh;
 }
 
-#root {
-  min-height: 100vh;
-}
-
-/* ── Typography ───────────────────────────────────────────── */
+/* ── Typography Hierarchy ── */
 h1, h2, h3, h4, h5, h6 {
   color: var(--on-surface);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   letter-spacing: var(--tracking-tight);
   line-height: var(--leading-tight);
-  font-weight: 600;
+  margin-bottom: var(--space-2);
 }
 
-h1 { font-size: var(--text-headline-lg); }
-h2 { font-size: var(--text-headline-md); }
-h3 { font-size: var(--text-title-lg); }
-h4 { font-size: var(--text-title-md); }
-h5 { font-size: var(--text-title-sm); }
-h6 { font-size: var(--text-body-lg); font-weight: 500; }
+h1 { font-size: var(--text-headline-lg); font-weight: 800; }
+h2 { font-size: var(--text-headline-md); font-weight: 700; }
+h3 { font-size: var(--text-headline-sm); font-weight: 600; }
+h4 { font-size: var(--text-title-lg); font-weight: 600; }
+h5 { font-size: var(--text-title-md); font-weight: 600; }
+h6 { font-size: var(--text-title-sm); font-weight: 600; }
 
 p {
   color: var(--on-surface-variant);
-  line-height: var(--leading-relaxed);
+  font-size: var(--text-body-md);
+  font-weight: 400;
+}
+
+strong, b {
+  color: var(--on-surface);
+  font-weight: 600;
+}
+
+small, .text-muted {
+  color: var(--on-surface-muted);
+  font-size: var(--text-label-md);
+  font-weight: 400;
+  letter-spacing: var(--tracking-normal);
 }
 
 a {
@@ -62,50 +70,109 @@ a:hover {
   color: var(--primary-container);
 }
 
-code, pre {
-  font-family: var(--font-mono);
-  font-size: var(--text-body-sm);
+/* ============================================================
+   Premium SaaS Additions & Alignment Polish
+   ============================================================ */
+
+/* Selection Highlight (High-End Polish) */
+::selection {
+  background-color: var(--primary);
+  color: var(--on-primary);
 }
 
-/* ── The No-Line Rule ─────────────────────────────────────── 
-   Traditional 1px borders for sectioning are PROHIBITED.
-   Boundaries are defined through background color shifts. */
-
-/* ── Links & Buttons Base ─────────────────────────────────── */
-button {
-  font-family: var(--font-primary);
-  cursor: pointer;
-  border: none;
+/* Focus States (Abolish default outlines, replace with glowing rings) */
+*:focus-visible {
   outline: none;
-  background: none;
-  font-size: var(--text-body-md);
-  transition: all var(--transition-normal);
+  box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--primary);
+  border-radius: var(--radius-xs);
 }
 
-input, textarea, select {
-  font-family: var(--font-primary);
-  font-size: var(--text-body-md);
-  outline: none;
-  border: none;
-  background: var(--surface-container-highest);
-  color: var(--on-surface);
-  padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-md);
-  transition: all var(--transition-normal);
+/* Perfect alignment for all material icons */
+.material-symbols-outlined {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  line-height: 1; /* Stops icons from forcing strange heights */
 }
 
-input:focus, textarea:focus, select:focus {
+/* Card Hierarchy & Border Strictness */
+.sidebar, .topbar {
+  border-right: 1px solid var(--outline-variant);
+  border-bottom: 1px solid var(--outline-variant);
+  background-color: var(--surface-container-lowest);
+  box-shadow: var(--shadow-sm);
+}
+
+.stat-card, .dashboard-card, .repos-card, .pr-card, .insights-card, .reports-card {
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--outline-variant);
+  background-color: var(--surface-container-lowest);
+  border-radius: var(--radius-lg); /* Strict adherence to Large Radius */
+  transition: all var(--transition-normal);
+  padding: var(--space-6); /* Absolute consistency over all card types */
+}
+
+.stat-card:hover, .pr-card:hover, .reports-card:hover, .repos-item:hover, .insights-blindspot:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--surface-container-highest);
+  transform: translateY(-2px);
+}
+
+/* Premium Primary Actions */
+.repos-cta-btn, .btn, button.primary {
+  box-shadow: var(--shadow-glow-primary);
+  border: 1px solid transparent;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.repos-cta-btn:active, .btn:active, button.primary:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+.repos-cta-btn:hover, .btn:hover, button.primary:hover {
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+  transform: translateY(-1px);
+}
+
+/* Strict Spacing for UI List items */
+.dashboard-agent-log, .repos-item, .insights-blindspot, .reports-action-item {
+  border: 1px solid var(--outline-variant);
   background: var(--surface-container-lowest);
-  box-shadow: 0 0 0 2px var(--primary);
+  padding: var(--space-4) var(--space-5);
+  display: flex;
+  align-items: center; /* Enforce rigid vertical centering */
+  border-radius: var(--radius-md);
 }
 
-::placeholder {
-  color: var(--outline);
+/* Flawless Badges */
+.risk-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  letter-spacing: var(--tracking-wide);
+  border: 1px solid transparent;
+  padding: var(--space-1) var(--space-3);
+  line-height: 1; /* Eliminates internal top/bottom drift */
 }
 
-/* ── Scrollbar ────────────────────────────────────────────── */
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Custom Scrollbar Polish */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 6px; /* Slightly thinner for SaaS feel */
   height: 6px;
 }
 
@@ -120,87 +187,4 @@ input:focus, textarea:focus, select:focus {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--outline);
-}
-
-/* ── Utility Classes ──────────────────────────────────────── */
-.glass {
-  background: var(--glass-background);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  border: var(--glass-border);
-}
-
-.gradient-primary {
-  background: var(--gradient-primary);
-}
-
-.gradient-secondary {
-  background: var(--gradient-secondary);
-}
-
-.gradient-tertiary {
-  background: var(--gradient-tertiary);
-}
-
-.label-uppercase {
-  text-transform: uppercase;
-  letter-spacing: var(--tracking-wide);
-  font-size: var(--text-label-md);
-  font-weight: 600;
-}
-
-/* ── Material Symbols Configuration ───────────────────────── */
-.material-symbols-outlined {
-  font-variation-settings:
-    'FILL' 0,
-    'wght' 400,
-    'GRAD' 0,
-    'opsz' 24;
-  vertical-align: middle;
-}
-
-.material-symbols-outlined.filled {
-  font-variation-settings:
-    'FILL' 1,
-    'wght' 400,
-    'GRAD' 0,
-    'opsz' 24;
-}
-
-/* ── Animations ───────────────────────────────────────────── */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes slideInLeft {
-  from { opacity: 0; transform: translateX(-16px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
-}
-
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-@keyframes countUp {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.4s ease forwards;
-}
-
-.animate-slide-in {
-  animation: slideInLeft 0.3s ease forwards;
-}
-
-.animate-pulse {
-  animation: pulse 2s ease-in-out infinite;
 }
