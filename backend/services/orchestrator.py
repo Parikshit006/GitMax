@@ -16,7 +16,7 @@ from backend.models.schemas import AnalysisResponse, PipelineContext, PRRequest
 
 class Orchestrator:
     """
-    Service responsible for orchestrating agents in the PR analysis pipeline.
+    Service responsible for coordinating the sequential specialized agent pipeline in the PR analysis workflow.
     """
 
     def __init__(self):

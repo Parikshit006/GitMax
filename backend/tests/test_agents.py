@@ -53,5 +53,5 @@ async def test_cost_agent_math():
     agent = CostAgent()
     out_ctx = await agent.run(ctx)
     
-    # 65% probability multiplied by $100k Base SLA = exactly $65,000
-    assert out_ctx.file_results[0].expected_cost == 65000.0
+    # 65% probability multiplied by $386k Base SLA = exactly $250,900
+    assert out_ctx.file_results[0].expected_cost == 250900.0

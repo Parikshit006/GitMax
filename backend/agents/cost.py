@@ -4,11 +4,11 @@ from backend.models.schemas import PipelineContext
 # ---------------------------------------------------------------------------
 # Cost constants (all values in USD)
 # ---------------------------------------------------------------------------
-DOWNTIME_COST: float = 50_000   # Cost of production downtime per incident
+DOWNTIME_COST: float = 336_000   # Gartner Baseline Estimate: $5600/min * 60 min
 FIX_COST: float = 30_000        # Engineer time to diagnose and fix
 DELAY_COST: float = 20_000      # Delay to downstream teams / releases
 
-TOTAL_IMPACT: float = DOWNTIME_COST + FIX_COST + DELAY_COST  # = 100_000
+TOTAL_IMPACT: float = DOWNTIME_COST + FIX_COST + DELAY_COST  # = 386_000
 
 # Probability of failure by risk level
 P_FAILURE: dict[str, float] = {
