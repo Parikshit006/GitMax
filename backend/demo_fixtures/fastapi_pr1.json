@@ -1,0 +1,21 @@
+{
+  "summary": {
+    "overall_risk": "HIGH",
+    "expected_loss": 130000.0,
+    "confidence": 0.95,
+    "recommendation": "DEMO FALLBACK: Review system risk parameters and mitigate technical debt proactively."
+  },
+  "files": [
+    {
+      "name": "src/main.py",
+      "risk_level": "HIGH",
+      "expected_cost": 65000.0,
+      "metrics": {"complexity": 85.0, "commits": 12.0},
+      "reasons": ["Demonstration simulated high complexity.", "Extreme historical churn (Mock)."],
+      "recommendation": "REJECT. Cost of inaction too high.",
+      "signals": []
+    }
+  ],
+  "agent_logs": [{"agent": "Orchestrator", "status": "DEMO FIXTURE LOADED"}],
+  "signals": [{"name": "Health Score", "value": 15.0, "status": "INFO"}]
+}
