@@ -6,6 +6,7 @@ from backend.api.routes import router as api_router
 from backend.auth.routes import router as auth_router
 from contextlib import asynccontextmanager
 from backend.database import engine, Base
+from backend.config import settings
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

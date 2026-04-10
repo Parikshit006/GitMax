@@ -5,7 +5,7 @@ def test_analyze_pr_endpoint(client):
     We test against the mock-data fallback returning exactly the standard format.
     """
     payload = {
-        "repo_url": "https://github.com/fastapi/fastapi",
+        "repo_url": "https://github.com/fastapi/fastapi/pull/999",
         "pr_number": 999
     }
     

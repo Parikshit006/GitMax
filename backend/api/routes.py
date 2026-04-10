@@ -1,5 +1,6 @@
 from typing import Any, Dict, List
 import httpx
+from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import JSONResponse
 from backend.models.schemas import PRRequest, AnalysisResponse, RepoResponse, PRListResponse, HistoryResponse
 from backend.services.orchestrator import Orchestrator
