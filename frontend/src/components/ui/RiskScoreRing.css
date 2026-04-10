@@ -1,0 +1,17 @@
+.risk-score-ring {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.risk-score-ring-progress {
+  transition: stroke-dashoffset 1s ease;
+}
+
+.risk-score-ring-value {
+  position: absolute;
+  font-size: var(--text-body-sm);
+  font-weight: 700;
+  letter-spacing: var(--tracking-tight);
+}

@@ -1,0 +1,299 @@
+.repos-page { min-height: 100vh; }
+
+.repos-content {
+  padding: 0 var(--space-8) var(--space-8);
+  max-width: 1400px;
+}
+
+/* ── Hero ─────────────────────────────────────────────────── */
+.repos-hero {
+  margin-bottom: var(--space-6);
+  animation: fadeIn 0.4s ease;
+}
+
+.repos-hero h1 {
+  font-size: var(--text-headline-lg);
+  font-weight: 800;
+  letter-spacing: var(--tracking-tight);
+  margin-bottom: var(--space-2);
+}
+
+.repos-hero p {
+  font-size: var(--text-body-md);
+  color: var(--on-surface-variant);
+  max-width: 640px;
+  line-height: var(--leading-relaxed);
+}
+
+/* ── Top Grid ─────────────────────────────────────────────── */
+.repos-top-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+/* ── Cards ────────────────────────────────────────────────── */
+.repos-card {
+  background: var(--surface-container-lowest);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  animation: fadeIn 0.4s ease forwards;
+}
+
+.repos-card-header {
+  margin-bottom: var(--space-4);
+}
+
+.repos-card-header h3 {
+  font-size: var(--text-title-md);
+  font-weight: 700;
+  color: var(--on-surface);
+  margin-bottom: 4px;
+}
+
+.repos-card-sub {
+  font-size: var(--text-body-sm);
+  color: var(--on-surface-variant);
+}
+
+/* ── Connect ──────────────────────────────────────────────── */
+.repos-connect-grid {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.repos-connect-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  background: var(--surface-container-low);
+  border-radius: var(--radius-md);
+  font-size: var(--text-body-sm);
+  font-weight: 600;
+  color: var(--on-surface);
+  transition: all var(--transition-fast);
+}
+
+.repos-connect-btn:hover {
+  background: var(--surface-container);
+  box-shadow: var(--shadow-sm);
+}
+
+.repos-connect-btn .material-symbols-outlined {
+  color: var(--primary);
+  font-size: 20px;
+}
+
+/* ── Health Ring ───────────────────────────────────────────── */
+.repos-card--health {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.repos-health-ring {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: var(--space-4) 0;
+}
+
+.repos-health-ring-value {
+  position: absolute;
+  display: flex;
+  align-items: baseline;
+}
+
+.repos-health-number {
+  font-size: var(--text-display-sm);
+  font-weight: 800;
+  color: var(--accent-green);
+  letter-spacing: var(--tracking-tight);
+}
+
+.repos-health-unit {
+  font-size: var(--text-title-md);
+  font-weight: 600;
+  color: var(--accent-green);
+}
+
+/* ── Repo List ────────────────────────────────────────────── */
+.repos-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.repos-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-5);
+  background: var(--surface-container-low);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  animation: fadeIn 0.4s ease forwards;
+  gap: var(--space-6);
+}
+
+.repos-item:hover {
+  background: var(--surface-container);
+  transform: translateX(4px);
+}
+
+.repos-item-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex: 1;
+  min-width: 0;
+}
+
+.repos-item-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: var(--primary-fixed);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.repos-item-icon .material-symbols-outlined {
+  color: var(--primary);
+  font-size: 20px;
+}
+
+.repos-item-name {
+  font-weight: 700;
+  color: var(--on-surface);
+  font-size: var(--text-body-md);
+}
+
+.repos-item-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-label-md);
+  color: var(--outline);
+  margin-top: 2px;
+}
+
+.repos-item-dot {
+  color: var(--outline-variant);
+}
+
+.repos-item-branch {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.repos-item-center {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 140px;
+}
+
+.repos-item-health-bar {
+  width: 80px;
+  height: 6px;
+  background: var(--surface-container-highest);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.repos-item-health-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 1s ease;
+}
+
+.repos-item-health-label {
+  font-size: var(--text-label-md);
+  font-weight: 700;
+  min-width: 35px;
+}
+
+.repos-item-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.repos-item-sync {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--text-label-md);
+  color: var(--outline);
+  white-space: nowrap;
+}
+
+/* ── Bottom Grid ──────────────────────────────────────────── */
+.repos-bottom-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+  margin-top: var(--space-6);
+}
+
+.repos-card--custom,
+.repos-card--auto {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+.repos-card-big-icon {
+  font-size: 32px;
+  color: var(--primary);
+}
+
+.repos-card--auto .repos-card-big-icon {
+  color: var(--secondary);
+}
+
+.repos-card--custom p,
+.repos-card--auto p {
+  font-size: var(--text-body-sm);
+  max-width: 360px;
+  line-height: var(--leading-relaxed);
+}
+
+.repos-cta-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  background: var(--gradient-primary);
+  color: var(--on-primary);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: var(--text-body-sm);
+  margin-top: var(--space-2);
+  box-shadow: var(--shadow-glow-primary);
+  transition: all var(--transition-normal);
+}
+
+.repos-cta-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.repos-cta-btn--secondary {
+  background: var(--gradient-secondary);
+  box-shadow: var(--shadow-glow-secondary);
+}
+
+@media (max-width: 1200px) {
+  .repos-top-grid { grid-template-columns: 1fr; }
+  .repos-bottom-grid { grid-template-columns: 1fr; }
+}
