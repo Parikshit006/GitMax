@@ -31,6 +31,23 @@ class CodeMinerAgent(BaseAgent):
         # Extract files cleanly via the standard ABC interface
         fetched_files = await provider_bot.fetch_pr_files(repo_url=repo_url, pr_number=pr_number, token=token)
         
+        # Strict code file filtering as requested
+        allowed_extensions = {".py", ".js", ".ts"}
+        
+        filtered_files = []
+        for f in fetched_files:
+            filename: str = f["name"]
+            _, ext = os.path.splitext(filename)
+            ext = ext.lower()
+            if ext in allowed_extensions:
+                filtered_files.append(f)
+            else:
+                context.log(self.name, f"Skipped non-executable file: {filename}")
+
+                
+        # Re-assign filtered files back to the pool
+        fetched_files = filtered_files
+                
         modified_filenames = [f["name"] for f in fetched_files]
 
         # 2. Use PyDriller to determine historical 'bug churn' of those specific files
@@ -65,7 +82,7 @@ class CodeMinerAgent(BaseAgent):
         ]
 
         if not fetched_files:
-            raise ValueError("No files found in PR")
+            raise ValueError("No analyzable code files found in PR")
 
         context.raw_files = raw_files
         context.log(self.name, "done")

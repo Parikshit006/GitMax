@@ -3,7 +3,8 @@
     "overall_risk": "HIGH",
     "expected_loss": 130000.0,
     "confidence": 0.95,
-    "recommendation": "DEMO FALLBACK: Review system risk parameters and mitigate technical debt proactively."
+    "recommendation": "CRITICAL: The file src/main.py carries a 85% probability of causing a tier-1 system outage. At current SLA parameters, a single failure event presents a Rs. 1,30,000 risk exposure for this sprint. Immediate remediation is mandatory to prevent severe financial degradation and unplanned technical debt."
+
   },
   "files": [
     {

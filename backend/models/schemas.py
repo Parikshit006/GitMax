@@ -17,6 +17,7 @@ class PRRequest(BaseModel):
     pr_number: int = Field(..., description="Pull-request number to analyse")
     branch: Optional[str] = None
     base_branch: Optional[str] = "main"
+    company_config: Optional[Dict[str, Any]] = Field(default_factory=dict, description="Company configuration passed from the UI")
 
 
 # ---------------------------------------------------------------------------
@@ -80,12 +81,22 @@ class RepoResponse(BaseModel):
     name: str
     owner: str
     is_private: bool
+    language: Optional[str] = "Python"
+    stars: Optional[int] = 0
+    updated_at: Optional[str] = None
+
 
 class PRListResponse(BaseModel):
     pr_number: int
     title: str
     state: str
     html_url: str = Field(default_factory=list)
+    author: Optional[str] = None
+    branch: Optional[str] = None
+    created_at: Optional[str] = None
+    additions: Optional[int] = 0
+    deletions: Optional[int] = 0
+
 
 
 # ---------------------------------------------------------------------------

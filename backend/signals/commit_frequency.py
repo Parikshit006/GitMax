@@ -14,12 +14,19 @@ class CommitFrequencySignal(BaseSignal):
         return "Commit Frequency"
 
     async def compute(self, target: Any, **kwargs: Any) -> SignalOutput:
-        # Mock logic representing commit frequency computation
-        mock_commit_count = 45
-        mock_status = "HIGH"
+        # Utilize the REAL commit count extracted via PyDriller in the miner stage
+        actual_count = getattr(target, 'commit_count', 0)
+        
+        # Simple threshold check to assign a status level
+        if actual_count >= 30:
+            status = "HIGH"
+        elif actual_count >= 15:
+            status = "MEDIUM"
+        else:
+            status = "LOW"
 
         return SignalOutput(
             name=self.name,
-            value=mock_commit_count,
-            status=mock_status
+            value=actual_count,
+            status=status
         )

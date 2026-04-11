@@ -1,86 +1,91 @@
-import React from 'react'
-import { NavLink, useLocation } from 'react-router-dom'
-import './Sidebar.css'
+import { NavLink, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import {
+  LayoutDashboard,
+  GitBranch,
+  GitPullRequest,
+  BarChart3,
+  LogOut,
+  Zap,
+  Settings,
+} from 'lucide-react';
 
 const navItems = [
-  { path: '/dashboard', icon: 'dashboard', label: 'Dashboard' },
-  { path: '/repositories', icon: 'inventory_2', label: 'Repositories' },
-  { path: '/pull-requests', icon: 'merge_type', label: 'Pull Requests' },
-  { path: '/insights', icon: 'insights', label: 'Insights' },
-  { path: '/reports', icon: 'analytics', label: 'Reports' },
-]
-
-const agentItems = [
-  { icon: 'smart_toy', label: 'Repo Agent', status: 'active' },
-  { icon: 'security', label: 'Risk Agent', status: 'active' },
-  { icon: 'analytics', label: 'Report Agent', status: 'idle' },
-]
+  { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { to: '/repositories', label: 'Repositories', icon: GitBranch },
+  { to: '/pull-requests', label: 'Pull Requests', icon: GitPullRequest },
+  { to: '/reports', label: 'Reports', icon: BarChart3 },
+  { to: '/setup', label: 'SLA Config', icon: Settings },
+];
 
 export default function Sidebar() {
-  const location = useLocation()
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   return (
-    <aside className="sidebar">
-      <div className="sidebar-inner">
-        {/* Logo */}
-        <div className="sidebar-logo">
-          <div className="sidebar-logo-icon">
-            <span className="material-symbols-outlined filled">hub</span>
-          </div>
-          <div className="sidebar-logo-text">
-            <span className="sidebar-logo-name">Git Max AI</span>
-            <span className="sidebar-logo-sub">Risk Intelligence</span>
-          </div>
-        </div>
+    <aside className="fixed top-0 left-0 w-64 h-screen bg-bg-surface border-r border-border flex flex-col z-40">
+      {/* Logo */}
+      <div className="flex items-center gap-2 px-6 py-5 border-b border-border">
+        <Zap className="w-7 h-7 text-blue" />
+        <span className="text-xl font-display font-bold text-blue tracking-tight">GitMax</span>
+        <span className="ml-1 px-1.5 py-0.5 text-[10px] font-display bg-cyan/20 text-cyan border border-cyan/30 rounded-md">
+          AI
+        </span>
+      </div>
 
-        {/* Main Navigation */}
-        <nav className="sidebar-nav">
-          <div className="sidebar-section-label">MENU</div>
-          {navItems.map((item) => (
+      {/* Navigation */}
+      <nav className="flex-1 px-3 py-4 space-y-1">
+        {navItems.map((item) => {
+          const Icon = item.icon;
+          return (
             <NavLink
-              key={item.path}
-              to={item.path}
+              key={item.to}
+              to={item.to}
               className={({ isActive }) =>
-                `sidebar-nav-item ${isActive ? 'sidebar-nav-item--active' : ''}`
+                `flex items-center gap-3 px-3 py-2.5 rounded-lg font-display text-sm transition-all duration-200 ${
+                  isActive
+                    ? 'bg-blue/10 text-blue border border-blue/20'
+                    : 'text-muted hover:text-text hover:bg-bg-card'
+                }`
               }
             >
-              <span className="material-symbols-outlined sidebar-nav-icon">
-                {item.icon}
-              </span>
-              <span className="sidebar-nav-label">{item.label}</span>
-              {item.path === '/dashboard' && location.pathname === '/dashboard' && (
-                <span className="sidebar-nav-indicator" />
-              )}
+              <Icon className="w-4.5 h-4.5" />
+              {item.label}
             </NavLink>
-          ))}
-        </nav>
+          );
+        })}
+      </nav>
 
-        {/* AI Agents */}
-        <div className="sidebar-agents">
-          <div className="sidebar-section-label">AI AGENTS</div>
-          {agentItems.map((agent) => (
-            <div key={agent.label} className="sidebar-agent-item">
-              <span className="material-symbols-outlined sidebar-nav-icon">
-                {agent.icon}
+      {/* User section */}
+      <div className="border-t border-border p-4">
+        <div className="flex items-center gap-3 mb-3">
+          {user?.avatar ? (
+            <img src={user.avatar} alt="" className="w-8 h-8 rounded-full" />
+          ) : (
+            <div className="w-8 h-8 rounded-full bg-blue/20 flex items-center justify-center">
+              <span className="text-xs font-display text-blue font-bold">
+                {(user?.username || 'U')[0].toUpperCase()}
               </span>
-              <span className="sidebar-nav-label">{agent.label}</span>
-              <span className={`sidebar-agent-status sidebar-agent-status--${agent.status}`} />
             </div>
-          ))}
+          )}
+          <div className="min-w-0">
+            <p className="text-sm font-display text-text truncate">{user?.username || 'User'}</p>
+            <p className="text-xs text-muted capitalize">{user?.provider || 'github'}</p>
+          </div>
         </div>
-
-        {/* Bottom Links */}
-        <div className="sidebar-bottom">
-          <a href="#" className="sidebar-nav-item">
-            <span className="material-symbols-outlined sidebar-nav-icon">settings</span>
-            <span className="sidebar-nav-label">Settings</span>
-          </a>
-          <a href="#" className="sidebar-nav-item">
-            <span className="material-symbols-outlined sidebar-nav-icon">help_outline</span>
-            <span className="sidebar-nav-label">Support</span>
-          </a>
-        </div>
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-display text-muted hover:text-red hover:bg-red/10 transition-colors"
+        >
+          <LogOut className="w-4 h-4" />
+          Sign Out
+        </button>
       </div>
     </aside>
-  )
+  );
 }

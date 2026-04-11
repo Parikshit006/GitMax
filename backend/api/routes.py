@@ -76,8 +76,12 @@ async def get_github_repos(user_data: Dict[str, Any] = Depends(get_current_user)
                 out.append({
                     "name": r.get("name", ""),
                     "owner": r.get("owner", {}).get("login", ""),
-                    "is_private": r.get("private", False)
+                    "is_private": r.get("private", False),
+                    "language": r.get("language", "Python"),
+                    "stars": r.get("stargazers_count", 0),
+                    "updated_at": r.get("updated_at")
                 })
+
             return out
     except Exception as e:
         print(f"Graceful trap resolving Github repos limit: {e}")
@@ -105,8 +109,12 @@ async def get_github_prs(owner: str, repo: str, user_data: Dict[str, Any] = Depe
                     "pr_number": pr.get("number", 0),
                     "title": pr.get("title", ""),
                     "state": pr.get("state", ""),
-                    "html_url": pr.get("html_url", "")
+                    "html_url": pr.get("html_url", ""),
+                    "author": pr.get("user", {}).get("login"),
+                    "branch": pr.get("head", {}).get("ref"),
+                    "created_at": pr.get("created_at")
                 })
+
             return out
     except Exception as e:
         print(f"Graceful trap resolving Github PR limits: {e}")
@@ -145,3 +153,26 @@ async def get_history(user_data: Dict[str, Any] = Depends(get_current_user), db:
             "summary": log.summary_text
         } for log in logs
     ]
+
+from fastapi.responses import StreamingResponse
+import io
+from backend.services.pdf_service import generate_pdf_report
+
+@router.post("/report/pdf")
+async def get_pdf_report(
+    data: AnalysisResponse, 
+    user_data: Dict[str, Any] = Depends(get_current_user)
+):
+    """Generates a text-based, structured PDF from the passed AnalysisResponse data."""
+    try:
+        pdf_bytes = generate_pdf_report(data)
+        
+        return StreamingResponse(
+            io.BytesIO(pdf_bytes),
+            media_type="application/pdf",
+            headers={"Content-Disposition": "attachment; filename=GitMax_Report.pdf"}
+        )
+    except Exception as e:
+        print(f"PDF Generation failed: {e}")
+        raise HTTPException(status_code=500, detail="Failed to generate PDF report")
+

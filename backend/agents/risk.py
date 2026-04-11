@@ -58,7 +58,8 @@ class RiskAgent(BaseAgent):
             # Build human-readable reasons with predictive 90-Day phrasing
             reasons: list[str] = []
             if complexity >= COMPLEXITY_HIGH_THRESHOLD:
-                reasons.append(f"High complexity detected. 85% probability of causing structural slow-downs in the next 90 days.")
+                prob = max(80, 100 - health_score)
+                reasons.append(f"High complexity detected. {prob}% probability of causing structural slow-downs in the next 90 days.")
             elif complexity >= COMPLEXITY_MEDIUM_THRESHOLD:
                 reasons.append("Moderate complexity. Monitored for future 90-day maintenance cycles.")
 

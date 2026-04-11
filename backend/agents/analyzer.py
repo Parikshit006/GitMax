@@ -35,12 +35,16 @@ class AnalyzerAgent(BaseAgent):
                 output = await signal.compute(target=raw_file)
                 signals.append(output)
 
+            # Extract signal values for the metrics object
+            complexity_val = next((s.value for s in signals if s.name == "Complexity"), 0)
+            commits_val = next((s.value for s in signals if s.name == "Commit Frequency"), 0)
+
             file_results.append(
                 FileResult(
                     name=raw_file.name,
                     metrics=FileMetrics(
-                        complexity=raw_file.commit_count,   # placeholder; real value from signal
-                        commits=raw_file.commit_count,
+                        complexity=complexity_val,
+                        commits=commits_val,
                     ),
                     signals=signals,
                 )

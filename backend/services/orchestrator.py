@@ -41,9 +41,9 @@ class Orchestrator:
         Runs the full PR analysis pipeline for a given request.
         Safely intercepts via DEMO_MODE toggle guaranteeing presentation performance.
         """
-        # DEMO_MODE MUST INTERCEPT BEFORE ANY REMOTE LOGIC RUNS
-        if settings.DEMO_MODE:
-            return self._load_fixture()
+        # LOG TO ENSURE TRANSPARENCY
+        print(f"[ORCHESTRATOR] Running REAL pipeline for {request.repo_url} (PR #{request.pr_number})")
+
             
         # Create the initial shared context
         run_id = str(uuid.uuid4())
@@ -79,7 +79,10 @@ class Orchestrator:
                             analysis_resp=final_response.model_dump()
                         )
                 except Exception as log_e:
-                    print(f"Non-fatal fallback avoiding DB transaction dumps: {log_e}")
+                    if str(log_e) == "'id'":
+                        print("[ORCHESTRATOR] CRITICAL: user_data is missing 'id'. User MUST Sign Out and Sign In again to refresh their session token.")
+                    else:
+                        print(f"[ORCHESTRATOR] Non-fatal DB logging failure: {type(log_e).__name__}: {log_e}")
 
             return final_response
 
@@ -87,5 +90,8 @@ class Orchestrator:
             if isinstance(e, ValueError) and str(e) == "No files found in PR":
                 raise e
                 
-            print(f"Pipeline crashed Safely Caught. Falling back to Demo Fixtures. Error: {e}")
-            return self._load_fixture()
+            print(f"Pipeline execution failed: {type(e).__name__}: {e}")
+            # Do NOT return a fixture here unless explicitly forced. 
+            # Return a structured error response instead.
+            raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
+
